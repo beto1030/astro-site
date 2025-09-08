@@ -57,7 +57,7 @@ function itemsFor(key) { return lessons.filter(l => l.domainKey === key) }
                                   <article class="rounded-xl bg-white shadow p-5 hover:shadow-lg transition">
 
                                         <h3 class="font-semibold">
-                                          <a class="hover:underline" href={`/topics/${encodeURIComponent(l.slug)}`}>
+                                          <a class="hover:underline" href={`${import.meta.env.BASE_URL}/topics/${encodeURIComponent(l.slug)}`}>
                                             {l.title}
                                           </a>
                                         </h3>
@@ -71,7 +71,7 @@ function itemsFor(key) { return lessons.filter(l => l.domainKey === key) }
 
                                                          return ( 
                                                             <li> 
-                                                                <a href={`/topics/${encodeURIComponent(l.slug)}#h-${ s.key }`}>{ text }</a>
+                                                                <a href={`${import.meta.env.BASE_URL}/topics/${encodeURIComponent(l.slug)}#h-${ s.key }`}>{ text }</a>
                                                             </li>
                                                          )
                                                   })
