@@ -1,0 +1,71 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* header at top, footer at bottom */
+
+    min-height: 100vh;
+    outline: 1px solid red;
+
+}
+header, main, footer {
+    max-width: 800px;
+    margin: 30px auto;
+}
+
+nav {
+    text-align: center;
+}
+nav a {
+    text-decoration: none;
+
+}
+
+footer {
+    margin-top: auto;
+}
+
+
+div ul li {
+    margin: 10px 0 0 30px;
+}
+
+section h2 {
+    margin: 20px 0;
+}
+
+
+/* css to make targeted summary link fade in and out the header on the page */
+h3:target {
+  animation: target-flash 10s ease-out 1;
+}
+
+@keyframes target-flash {
+  0%   { background-color: #fef08a; }
+  100% { background-color: transparent; }
+}
+
+
+
+div p {
+   margin-top: 35px; 
+}
+
+h1 + div > p, h1 + div > ul {
+    margin: 10px 0 0 16px;
+}
+h1 + div > p {
+    margin-top: 16px;
+}
+
+h1 + div > p:last-child {
+    margin: 0;
+}
+
+article {
+    margin-left: 30px;
+    margin-bottom: 20px;
+}

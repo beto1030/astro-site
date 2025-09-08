@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { sanity } from '../../lib/sanity'
+import { portableToHtml } from '../../lib/portableText'
+import { renderPortableText } from '@/lib/ptToHtml'
+
+
+export async function getStaticPaths() {
+  const slugs = await sanity.fetch(
+    `*[_type == "lesson" && defined(slug.current)]{ "slug": slug.current }`
+  )
+  return slugs.map((s: any) => ({ params: { slug: s.slug } }))
+}
+
+const { slug } = Astro.params
+
+const lesson = await sanity.fetch(
+  `*[_type == "lesson" && slug.current == $slug][0]{ title, body }`,
+  { slug }
+)
+
+if (!lesson) {
+  throw new Error('Lesson not found')
+}
+
+const html = portableToHtml(lesson.body)
+---
+<BaseLayout title={lesson.title}>
+  <article class="prose prose-zinc max-w-none">
+    <h1>{lesson.title}</h1>
+    <div set:html={html}></div>
+  </article>
+  <p style="margin-top:16px;"><a href="/topics">← Back to all topics</a></p>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      function highlightTarget() {
+        // clear previous highlights
+        document.querySelectorAll("h3.highlight").forEach(el => el.classList.remove("highlight"))
+        const id = window.location.hash.slice(1)
+        if (id) {
+          const el = document.getElementById(id)
+          if (el) {
+            el.classList.add("highlight")
+            setTimeout(() => el.classList.remove("highlight"), 1500) // fade after 1.5s
+          }
+        }
+      }
+      window.addEventListener("hashchange", highlightTarget)
+      highlightTarget() // run on load too
+    })
+  
+  </script>
+
+</BaseLayout>
+

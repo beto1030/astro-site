@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { sanity } from '../../lib/sanity'
+
+const lessonsRaw = await sanity.fetch(`
+*[_type=="lesson" && defined(slug.current)] | order(domain asc, _createdAt asc){
+  _id,
+  _createdAt,
+  title,
+  "slug": slug.current,
+  domain,
+  "summary": body[_type=="block" && style=="h3"]{
+    "key": _key,
+    "parts": children[_type=="span"][].text
+  }
+}
+`)
+
+function slugify(s) {
+  return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
+}
+
+const lessons = (lessonsRaw||[]).map(l => ({ ...l, domainKey: slugify(l.domain) }))
+
+const domains = [
+  { key: 'optics', label: 'Domain I: Ophthalmic Optics' },
+  { key: 'ocular-anatomy', label: 'Domain II: Ocular Anatomy, Physiology, Pathology, and Refraction' },
+  { key: 'ophthalmic-products', label: 'Domain III: Ophthalmic Products' },
+  { key: 'instrumentation', label: 'Domain IV. Instrumentation' },
+  { key: 'dispensing-procedures', label: 'Domain V. Dispensing Procedures' },
+  { key: 'laws-regulations-and-standards', label: 'Domain VI. Laws, Regulations, and Standards' },
+]
+
+
+function itemsFor(key) { return lessons.filter(l => l.domainKey === key) }
+
+---
+
+<BaseLayout title="All Topics">
+  {
+    domains.map((d) => {
+        const items = itemsFor(d.key)
+        return (
+
+                <section class="mb-8">
+
+                      <h2 class="text-2xl font-bold mb-4">{d.label}</h2>
+
+                      {
+                          items.length === 0 ? (<p class="text-sm opacity-70">No topics yet.</p>):
+                          (
+                            <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+
+                              {
+                                items.map((l) => (
+
+                                  <article class="rounded-xl bg-white shadow p-5 hover:shadow-lg transition">
+
+                                        <h3 class="font-semibold">
+                                          <a class="hover:underline" href={`/topics/${encodeURIComponent(l.slug)}`}>
+                                            {l.title}
+                                          </a>
+                                        </h3>
+
+                                        {Array.isArray(l.summary) && l.summary.length > 0 && 
+                                          (
+                                            <ul class="text-sm mt-2 text-zinc-700 list-disc pl-5">
+                                                {
+                                                  l.summary.map((s) => {
+                                                         const text = Array.isArray(s.parts) ? s.parts.join('') : s.text || ''
+
+                                                         return ( 
+                                                            <li> 
+                                                                <a href={`/topics/${encodeURIComponent(l.slug)}#h-${ s.key }`}>{ text }</a>
+                                                            </li>
+                                                         )
+                                                  })
+                                                }
+                                            </ul>
+                                          )
+                                        }
+
+                                  </article>
+                                ))
+                              }
+                            </div>
+                          )
+                      }
+                </section>
+        )/*return*/
+    })/*domains.map()*/
+  }
+</BaseLayout>
+
