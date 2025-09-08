@@ -1,0 +1,21 @@
+{
+  "name": "sanity-studio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "start": "sanity start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@sanity/cli": "^3.99.0",
+    "@sanity/vision": "^4.6.1",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.1.19"
+  }
+}

@@ -1,0 +1,18 @@
+# --- Astro front-end (abo-study) ---
+abo-study/node_modules/
+abo-study/dist/
+abo-study/.env
+abo-study/.env.*
+!abo-study/.env.example
+
+# --- Sanity Studio back-end ---
+sanity-studio/node_modules/
+sanity-studio/dist/
+sanity-studio/.sanity/
+sanity-studio/.env
+sanity-studio/.env.*
+!sanity-studio/.env.example
+
+# --- General ---
+.DS_Store
+*.log
