@@ -4,6 +4,72 @@ This guide shows step by step how to create an **Astro project** from scratch, c
 
 ---
 
+## 🧪 Daily Dev Mode Workflow (Local)
+
+Use this flow while actively building features locally. It keeps links correct in dev **and** on GitHub Pages.
+
+### 0) Start the dev server
+```bash
+npm --prefix abo-study run dev
+# open http://localhost:4321
+```
+
+### 1) Verify base-aware links
+You're using a `<base>` tag in the main layout to make relative links work under `/` locally and `/REPO_NAME/` in CI:
+
+`abo-study/src/layouts/BaseLayout.astro`
+```astro
+<head>
+  <base href={import.meta.env.BASE_URL} />
+</head>
+```
+Navigation uses **relative links** (no leading `/`):
+```astro
+<a href="">Home</a>
+<a href="topics/">Topics</a>
+<a href="about/">About</a>
+```
+- Dev (local): resolves to `/`, `/topics/`, `/about/`
+- GitHub Pages: resolves to `/astro-site/`, `/astro-site/topics/`, `/astro-site/about/`
+
+### 2) Check for root-absolute links in source (catch early)
+```bash
+grep -RIn --include='*.astro' --include='*.md' 'href="/' abo-study/src
+grep -RIn --include='*.astro' --include='*.md' 'src="/'  abo-study/src
+# If any results appear, fix to relative: href="topics/", src="images/logo.svg", etc.
+```
+
+### 3) Hot-reload, console checks, and 404s
+- Keep the browser console open while developing.
+- If you see 404s for assets or pages, it’s almost always a leading `/` in a URL.
+- Fix the source and the dev server hot-reloads automatically.
+
+### 4) Optional: simulate production locally during dev
+If you want to preview exactly what GitHub Pages will serve (without pushing):
+```bash
+CI=1 npm --prefix abo-study run build
+npx --yes serve abo-study/dist
+```
+Now check navigation and assets in the static build.
+
+### 5) Commit as you go (clean history)
+```bash
+git add -A
+git commit -m "feat: add Topics page and nav"
+```
+
+### 6) Run a quick checklist before pushing
+```bash
+# Search for any leftover dangerous links
+grep -RIn --include='*.astro' --include='*.md' 'href="/' abo-study/src || echo "OK"
+grep -RIn --include='*.astro' --include='*.md' 'src="/'  abo-study/src || echo "OK"
+
+# (If skipping <base> and using BASE_URL in .astro)
+grep -RIn '\{`import.meta.env.BASE_URL`' abo-study/src && echo "Fix these!" || echo "OK"
+```
+
+---
+
 ## 0) Prereqs (one-time)
 
 ```bash
